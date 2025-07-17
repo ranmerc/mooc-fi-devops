@@ -1,0 +1,22 @@
+services:
+  example-frontend:
+    image: example-frontend:latest # already built from 1.14/example-frontend
+    ports:
+      - 127.0.0.1:3000:5000
+
+  example-backend:
+    image: example-backend:latest # already built from 1.14/example-backend
+    ports:
+      - 127.0.0.1:8080:8080
+    depends_on: [redis, db]
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+
+  redis:
+    image: redis:alpine3.21
+
+  db:
+    image: postgres:14.18-alpine3.22
+    environment:
+      - POSTGRES_PASSWORD=postgres
