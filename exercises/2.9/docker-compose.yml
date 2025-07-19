@@ -1,0 +1,28 @@
+services:
+  example-frontend:
+    build: ./example-frontend
+
+  example-backend:
+    build: ./example-backend
+    depends_on: [redis, db]
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+
+  redis:
+    image: redis:alpine3.21
+
+  db:
+    image: postgres:14.18-alpine3.22
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
+  proxy:
+    image: nginx:stable-alpine3.21-perl
+    depends_on: [example-frontend, example-backend]
+    ports:
+      - 127.0.0.1:80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: always # Or else nginx won't start if backend/frontend are not up and ready
+
